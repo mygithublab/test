@@ -2,7 +2,8 @@ FROM ubuntu
 RUN apt-get update && apt-get install -y \
     openssh-server \
     git \
-    vim 
+    vim \
+ && apt-get clean
 
 ADD run.sh /run.sh
 RUN chmod 755 /run.sh && mkdir -p /root/.ssh && mkdir /share
