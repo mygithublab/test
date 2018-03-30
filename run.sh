@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/etc/init.d/sshd restart
+/etc/init.d/ssh restart && /bin/bash
