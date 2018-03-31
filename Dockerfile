@@ -13,6 +13,7 @@ COPY run.sh /share
 COPY authorized_keys /root/.ssh
 RUN chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys
 RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab
+RUN cat /usr/share/zoneinfo/Asia/Shanghai > /etc/localtime
 
 EXPOSE 80 22
 
