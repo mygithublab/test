@@ -18,11 +18,12 @@ RUN mkdir /share \
  && chmod 700 /root/.ssh \
  && chmod 600 /root/.ssh/authorized_keys
 RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
- && sed -i 's/Etc\/UTC/Asia\/Shanghai/g' /etc/timezone 
-# && sed -i '$a server 0.ubuntu.pool.ntp.org' /etc/ntp.conf \
-# && sed -i '$a server 1.ubuntu.pool.ntp.org' /etc/ntp.conf \
-# && sed -i '$a server 2.ubuntu.pool.ntp.org' /etc/ntp.conf \
-# && sed -i '$a server 3.ubuntu.pool.ntp.org' /etc/ntp.conf
+ && sed -i 's/Etc\/UTC/Asia\/Shanghai/g' /etc/timezone \ 
+ && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+ && sed -i '$a server 0.ubuntu.pool.ntp.org' /etc/ntp.conf \
+ && sed -i '$a server 1.ubuntu.pool.ntp.org' /etc/ntp.conf \
+ && sed -i '$a server 2.ubuntu.pool.ntp.org' /etc/ntp.conf \
+ && sed -i '$a server 3.ubuntu.pool.ntp.org' /etc/ntp.conf
 
 EXPOSE 80 22
 
