@@ -4,8 +4,8 @@ RUN apt-get update && apt-get install -y \
     git \
     vim \
     cron \
-    ntp \
-#   ntpdate \
+#   ntp \
+    ntpdate \
     tzdata \
  && apt-get clean
 
