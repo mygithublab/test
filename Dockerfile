@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
  && apt-get clean
 
 #Install Nagios
+ADD nagios-4.3.4.tar.gz /tmp
+ADD nagios-plugins-2.2.1.tar.gz /tmp
 RUN apt-get update && apt-get install -y \
     autoconf \
     gcc \
@@ -22,9 +24,9 @@ RUN apt-get update && apt-get install -y \
     libapache2-mod-php7.0 \
     libgd2-xpm-dev \
  && apt-get clean \
- && cd /tmp \
- && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
- && tar zxvf nagioscore.tar.gz \
+# && cd /tmp \
+# && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
+# && tar zxvf nagioscore.tar.gz \
  && cd /tmp/nagioscore-nagios-4.3.4/ \
  && ./configure --with-httpd-conf=/etc/apache2/sites-enabled \
  && make all \
@@ -58,9 +60,9 @@ RUN apt-get update && apt-get install -y \
     libnet-snmp-perl \
     gettext \
  && apt-get clean \  
- && cd /tmp \
- && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
- && tar zxvf nagios-plugins.tar.gz \
+# && cd /tmp \
+# && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
+# && tar zxvf nagios-plugins.tar.gz \
  && cd /tmp/nagios-plugins-release-2.2.1/ \
  && ./tools/setup \
  && ./configure \
