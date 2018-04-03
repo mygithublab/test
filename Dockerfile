@@ -67,7 +67,7 @@ RUN apt-get update && apt-get install -y \
  && make \
  && make install \
  && /etc/init.d/apache2 restart \
- && /etc/init.d/nagios restart \
+ && /etc/init.d/nagios restart 
 
 ADD run.sh /run.sh
 ADD script.sh /script.sh
