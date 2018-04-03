@@ -23,6 +23,21 @@ RUN apt-get update && apt-get install -y \
     php \
     libapache2-mod-php7.0 \
     libgd2-xpm-dev \
+
+    autoconf \
+    gcc \
+    libc6 \
+    libmcrypt-dev \
+    make \
+    libssl-dev \
+    wget \
+    bc \
+    gawk \
+    dc \
+    build-essential \
+    snmp \
+    libnet-snmp-perl \
+    gettext \
  && apt-get clean \
 # && cd /tmp \
 # && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
@@ -44,22 +59,6 @@ RUN apt-get update && apt-get install -y \
  && systemctl restart apache2.service \
  && systemctl start nagios.service \
 
- && apt-get update && apt-get install -y \
-    autoconf \
-    gcc \
-    libc6 \
-    libmcrypt-dev \
-    make \
-    libssl-dev \
-    wget \
-    bc \
-    gawk \
-    dc \
-    build-essential \
-    snmp \
-    libnet-snmp-perl \
-    gettext \
- && apt-get clean \  
 # && cd /tmp \
 # && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
 # && tar zxvf nagios-plugins.tar.gz \
