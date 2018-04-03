@@ -62,7 +62,7 @@ RUN apt-get update && apt-get install -y \
 # && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
 # && tar zxvf nagios-plugins.tar.gz \
  && cd /tmp/nagios-plugins-2.2.1/ \
- && ./tools/setup \
+# && ./tools/setup \
  && ./configure \
  && make \
  && make install \
