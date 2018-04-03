@@ -56,8 +56,8 @@ RUN apt-get update && apt-get install -y \
  && a2enmod rewrite \
  && a2enmod cgi \
  && htpasswd -bcs /usr/local/nagios/etc/htpasswd.users nagiosadmin nagios \
- && systemctl restart apache2.service \
- && systemctl start nagios.service \
+ && /etc/init.d/apache2 restart \
+ && /etc/init.d/nagios restart \
 # && cd /tmp \
 # && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
 # && tar zxvf nagios-plugins.tar.gz \
@@ -66,10 +66,8 @@ RUN apt-get update && apt-get install -y \
  && ./configure \
  && make \
  && make install \
- && systemctl start nagios.service \
- && systemctl stop nagios.service \
- && systemctl restart nagios.service \
- && systemctl status nagios.service 
+ && /etc/init.d/apache2 restart \
+ && /etc/init.d/nagios restart \
 
 ADD run.sh /run.sh
 ADD script.sh /script.sh
