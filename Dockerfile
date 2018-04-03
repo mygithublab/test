@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     php \
     libapache2-mod-php7.0 \
     libgd2-xpm-dev \
-
+#plugin
     autoconf \
     gcc \
     libc6 \
@@ -58,7 +58,6 @@ RUN apt-get update && apt-get install -y \
  && htpasswd -bcs /usr/local/nagios/etc/htpasswd.users nagiosadmin nagios \
  && systemctl restart apache2.service \
  && systemctl start nagios.service \
-
 # && cd /tmp \
 # && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
 # && tar zxvf nagios-plugins.tar.gz \
@@ -67,12 +66,10 @@ RUN apt-get update && apt-get install -y \
  && ./configure \
  && make \
  && make install \
- 
  && systemctl start nagios.service \
  && systemctl stop nagios.service \
  && systemctl restart nagios.service \
  && systemctl status nagios.service 
-
 
 ADD run.sh /run.sh
 ADD script.sh /script.sh
