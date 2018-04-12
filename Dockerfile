@@ -73,6 +73,9 @@ ADD run.sh /run.sh
 ADD script.sh /script.sh
 ADD authorized_keys /root/.ssh/authorized_keys
 RUN mkdir /share \
+ && mkdir /bk \
+ && cp -R -p /usr/local/nagios/etc /bk \
+ && cp -R -p /usr/local/nagios/var /bk \
  && chmod 755 /run.sh \
  && chmod 755 /script.sh \
  && chmod 700 /root/.ssh \
@@ -87,6 +90,6 @@ RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
 
 EXPOSE 80 22
 
-VOLUME "/share"
+VOLUME "/share" "/usr/local/nagios/etc" "/usr/local/nagios/var"
 
 CMD ["/run.sh"]

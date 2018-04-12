@@ -7,3 +7,4 @@
 /etc/init.d/nagios restart
 /etc/init.d/apache2 restart
 /bin/bash
+cp -R -p /bk /share
