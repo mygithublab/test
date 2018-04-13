@@ -1,4 +1,17 @@
+#This dockerfile uses the ubuntu image
+#Author: Samson.mei@sap.com
+#Nagios core with Nagiosgraph
+
 FROM ubuntu
+
+#Maintainer information
+MAINTAINER Samson (Samson.mei@sap.com)
+
+#Setup environment
+ENV NAGIOSADMIN_USER nagiosadmin
+ENV NAGIOSADMIN_PASS nagios
+
+#Install tools in Ubuntu
 RUN apt-get update && apt-get install -y \
     openssh-server \
     git \
@@ -7,12 +20,13 @@ RUN apt-get update && apt-get install -y \
     ntp \
     ntpdate \
     tzdata \
- && apt-get clean
+#&& apt-get clean
 
-#Install Nagios
+#Copy local Nagios installation to container
 #ADD nagios-4.3.4.tar.gz /tmp
 #ADD nagios-plugins-2.2.1.tar.gz /tmp
-RUN apt-get update && apt-get install -y \
+
+#RUN apt-get update && apt-get install -y \
     autoconf \
     gcc \
     libc6 \
@@ -23,7 +37,8 @@ RUN apt-get update && apt-get install -y \
     php \
     libapache2-mod-php7.0 \
     libgd2-xpm-dev \
-#plugin
+
+#Prerequisties software for Nagios plugin
     autoconf \
     gcc \
     libc6 \
@@ -38,10 +53,19 @@ RUN apt-get update && apt-get install -y \
     snmp \
     libnet-snmp-perl \
     gettext \
-#ping
+
+#Prerequisties softeare for NagiosGraph
+    libcgi-pm-perl \
+    librrds-perl \
+    libgd-gd2-perl \
+    libnagios-object-perl \
+
+#Prerequisies software for ping function in container
     inetutils-ping \
     net-tools \
  && apt-get clean \
+
+#Download and nagios core and nagios plug-in to /tmp folder
  && cd /tmp \
  && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
  && tar zxvf nagioscore.tar.gz \
@@ -58,7 +82,7 @@ RUN apt-get update && apt-get install -y \
  && make install-webconf \
  && a2enmod rewrite \
  && a2enmod cgi \
- && htpasswd -bcs /usr/local/nagios/etc/htpasswd.users nagiosadmin nagios \
+ && htpasswd -bcs /usr/local/nagios/etc/htpasswd.users "${NAGIOSADMIN_USER}" "${NAGIOSADMIN_PASS}" \
  && cd /tmp \
  && wget --no-check-certificate -O nagios-plugins.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.2.1.tar.gz \
  && tar zxvf nagios-plugins.tar.gz \
@@ -67,6 +91,48 @@ RUN apt-get update && apt-get install -y \
  && ./configure \
  && make \
  && make install \
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
+
+#Downloading nagiosGraph to /tmp folder
+ && cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
+ && tar zxvf nagiosgraph.tar.gz && cd /tmp/nagiosgraph-1.5.2 \
+ && ./install.pl --install                                              \
+         --prefix                   /usr/local/nagiosgraph              \
+         --etc-dir                  /usr/local/nagiosgraph/etc          \
+         --var-dir                  /usr/local/nagiosgraph/var          \
+         --log-dir                  /usr/local/nagiosgraph/var/log      \
+         --doc-dir                  /usr/local/nagiosgraph/doc          \
+         --nagios-cgi-url           /nagiosgraph/cgi-bin                \
+         --nagios-perfdata-file     /usr/local/nagios/var/perfdata.log  \
+         --nagios-user              nagios                              \
+         --www-user                 www-data                            \
+ && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
+
+ && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i '$a service_perfdata_file=\/usr\/local\/nagios\/var\/perfdata.log' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i '$a service_perfdata_file_template=\$LASTSERVICECHECK\$\|\|\$HOSTNAME\$\|\|\$SERVICEDESC\$\|\|$SERVICEOUTPUT\$\|\|\$SERVICEPERFDATA\$' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i '$a service_perfdata_file_mode=a' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i '$a service_perfdata_file_processing_interval=10' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i '$a service_perfdata_file_processing_command=process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/nagios.cfg \
+
+# && cat <<EOF>>/usr/local/nagios/etc/objects/commands.cfg
+#define command {
+#        command_name process-service-perfdata-for-nagiosgraph
+#        command_line /usr/local/nagiosgraph/bin/insert.pl
+#        }
+# EOF \
+ && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t command_name process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t \} \ 
+
+ && sed -i '$a Include /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf' /etc/apache2/apache2.conf \
+ && sed -i '2,7 s/^#//' /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf \
+ && sed -i '12 s/^#//' /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf \
+ 
+ && sed -i '$a default_geometry = 1000x200' /usr/local/nagiosgraph/etc/nagiosgraph.conf \
+ && sed -i 's/action_url_target=_blank/action_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
+ && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
 ADD run.sh /run.sh
@@ -86,7 +152,7 @@ RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
  && sed -i '$a server 0.ubuntu.pool.ntp.org' /etc/ntp.conf \
  && sed -i '$a server 1.ubuntu.pool.ntp.org' /etc/ntp.conf \
  && sed -i '$a server 2.ubuntu.pool.ntp.org' /etc/ntp.conf \
- && sed -i '$a server 3.ubuntu.pool.ntp.org' /etc/ntp.conf
+ && sed -i '$a server 3.ubuntu.pool.ntp.org' /etc/ntp.conf 
 
 EXPOSE 80 22
 
