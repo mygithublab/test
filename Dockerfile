@@ -1,11 +1,11 @@
 #This dockerfile uses the ubuntu image
-#Author: Samson.mei@sap.com
+#Author: mygithublab@126.com
 #Nagios core with Nagiosgraph
 
 FROM ubuntu
 
 #Maintainer information
-MAINTAINER Samson (Samson.mei@sap.com)
+MAINTAINER Samson (mygithublab@126.com)
 
 #Setup environment
 ENV NAGIOSADMIN_USER nagiosadmin
@@ -106,8 +106,10 @@ RUN apt-get update && apt-get install -y \
          --nagios-perfdata-file     /usr/local/nagios/var/perfdata.log  \
          --nagios-user              nagios                              \
          --www-user                 www-data                            \
+#Graphs in Nagios Mouseovers for nagiosGraph
  && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
 
+#Configuring Data Processing for nagiosGraph
  && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file=\/usr\/local\/nagios\/var\/perfdata.log' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_template=\$LASTSERVICECHECK\$\|\|\$HOSTNAME\$\|\|\$SERVICEDESC\$\|\|$SERVICEOUTPUT\$\|\|\$SERVICEPERFDATA\$' /usr/local/nagios/etc/nagios.cfg \
@@ -121,15 +123,19 @@ RUN apt-get update && apt-get install -y \
 #        command_line /usr/local/nagiosgraph/bin/insert.pl
 #        }
 # EOF \
+
+#define the process-service-perfdata command for nagiosGraph
  && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_name process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t \} \ 
 
+#Configuring Graphing and Display for nagiosGraph
  && sed -i '$a Include /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf' /etc/apache2/apache2.conf \
  && sed -i '2,7 s/^#//' /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf \
  && sed -i '12 s/^#//' /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf \
- 
+ && sed -i '156 s/denied/granted/' /etc/apache2/apache2.conf \
+
  && sed -i '$a default_geometry = 1000x200' /usr/local/nagiosgraph/etc/nagiosgraph.conf \
  && sed -i 's/action_url_target=_blank/action_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
