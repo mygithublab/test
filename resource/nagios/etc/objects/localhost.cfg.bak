@@ -30,12 +30,6 @@ define host{
         address                 127.0.0.1
         }
 
-define host{
-	use			linux-server
-	host_name		test1
-	alias			test1
-	address			127.0.0.1
-	}
 
 
 ###############################################################################
@@ -51,7 +45,7 @@ define host{
 define hostgroup{
         hostgroup_name  linux-servers ; The name of the hostgroup
         alias           Linux Servers ; Long name of the group
-        members         localhost,test1     ; Comma separated list of hosts that belong to this group
+        members         localhost     ; Comma separated list of hosts that belong to this group
         }
 
 
@@ -69,7 +63,7 @@ define hostgroup{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             PING
 	check_command			check_ping!100.0,20%!500.0,60%
         }
@@ -81,7 +75,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             Root Partition
 	check_command			check_local_disk!20%!10%!/
         }
@@ -94,7 +88,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             Current Users
 	check_command			check_local_users!20!50
         }
@@ -106,7 +100,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             Total Processes
 	check_command			check_local_procs!250!400!RSZDT
         }
@@ -117,7 +111,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             Current Load
 	check_command			check_local_load!5.0,4.0,3.0!10.0,6.0,4.0
         }
@@ -129,7 +123,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             Swap Usage
 	check_command			check_local_swap!20!10
         }
@@ -141,7 +135,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             SSH
 	check_command			check_ssh
 	notifications_enabled		0
@@ -154,7 +148,7 @@ define service{
 
 define service{
         use                             local-service         ; Name of service template to use
-        hostgroup_name                       linux-servers
+        host_name                       localhost
         service_description             HTTP
 	check_command			check_http
 	notifications_enabled		0
