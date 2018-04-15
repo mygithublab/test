@@ -1,4 +1,4 @@
-#This dockerfile uses the ubuntu image
+#This dockerfile base on Ubuntu image
 #Author: mygithublab@126.com
 #Nagios core with Nagiosgraph
 
@@ -11,7 +11,7 @@ MAINTAINER Samson (mygithublab@126.com)
 ENV NAGIOSADMIN_USER nagiosadmin
 ENV NAGIOSADMIN_PASS nagios
 
-#Install tools in Ubuntu
+#Install tools 
 RUN apt-get update && apt-get install -y \
     openssh-server \
     git \
@@ -20,13 +20,12 @@ RUN apt-get update && apt-get install -y \
     ntp \
     ntpdate \
     tzdata \
-#&& apt-get clean
 
 #Copy local Nagios installation to container
 #ADD nagios-4.3.4.tar.gz /tmp
 #ADD nagios-plugins-2.2.1.tar.gz /tmp
 
-#RUN apt-get update && apt-get install -y \
+#Prerequisties software for Nagios Core
     autoconf \
     gcc \
     libc6 \
@@ -60,7 +59,7 @@ RUN apt-get update && apt-get install -y \
     libgd-gd2-perl \
     libnagios-object-perl \
 
-#Prerequisies software for ping function in container
+#Prerequisies software for ping function 
     inetutils-ping \
     net-tools \
  && apt-get clean \
@@ -94,7 +93,8 @@ RUN apt-get update && apt-get install -y \
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Downloading nagiosGraph to /tmp folder
- && cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
+ && cd /tmp \
+ && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
  && tar zxvf nagiosgraph.tar.gz && cd /tmp/nagiosgraph-1.5.2 \
  && ./install.pl --install                                              \
          --prefix                   /usr/local/nagiosgraph              \
@@ -108,6 +108,8 @@ RUN apt-get update && apt-get install -y \
          --www-user                 www-data                            \
 #Graphs in Nagios Mouseovers for nagiosGraph
  && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
+ && sed -i "172a action_url\t\t\t/nagiosgraph/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagiosgraph/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j" /usr/local/nagios/etc/objects/templates.cfg \
+ && sed -i "184a action_url\t\t\t/nagiosgraph/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagiosgraph/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j" /usr/local/nagios/etc/objects/templates.cfg \
 
 #Configuring Data Processing for nagiosGraph
  && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
@@ -128,7 +130,7 @@ RUN apt-get update && apt-get install -y \
  && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_name process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
- && sed -i '$a \\t \} \ 
+ && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \ 
 
 #Configuring Graphing and Display for nagiosGraph
  && sed -i '$a Include /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf' /etc/apache2/apache2.conf \
@@ -145,14 +147,21 @@ ADD run.sh /run.sh
 ADD script.sh /script.sh
 ADD authorized_keys /root/.ssh/authorized_keys
 RUN mkdir /share \
- && mkdir /bk \
- && cp -R -p /usr/local/nagios/etc /bk \
- && cp -R -p /usr/local/nagios/var /bk \
  && chmod 755 /run.sh \
  && chmod 755 /script.sh \
  && chmod 700 /root/.ssh \
- && chmod 600 /root/.ssh/authorized_keys
-RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
+ && chmod 600 /root/.ssh/authorized_keys \
+
+#Copy ngios and graph to /bk folder 
+ && mkdir /bk \
+ && cp -R -p /usr/local/nagios/etc /bk \
+ && cp -R -p /usr/local/nagios/var /bk \
+ && cp -R -p /usr/local/nagiosgraph/var /bk \
+ && cp -R -p /usr/local/nagios/libexec /bk \
+ && cp -R -p /usr/local/nagiosgraph/etc /bk \
+
+#Define schedule task and ntp timezone
+ && sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
  && sed -i 's/Etc\/UTC/Asia\/Shanghai/g' /etc/timezone \ 
  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && sed -i '$a server 0.ubuntu.pool.ntp.org' /etc/ntp.conf \
@@ -162,6 +171,6 @@ RUN sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
 
 EXPOSE 80 22
 
-VOLUME "/share" "/usr/local/nagios/etc" "/usr/local/nagios/var"
+VOLUME "/share" "/usr/local/nagios/etc" "/usr/local/nagios/var" "/usr/local/nagios/libexec" "/usr/local/nagiosgraph/var" "/usr/local/nagiosgraph/etc"
 
 CMD ["/run.sh"]
