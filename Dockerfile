@@ -153,12 +153,13 @@ RUN mkdir /share \
  && chmod 600 /root/.ssh/authorized_keys \
 
 #Copy ngios and graph to /bk folder 
- && mkdir /bk \
- && cp -R -p /usr/local/nagios/etc /bk \
- && cp -R -p /usr/local/nagios/var /bk \
- && cp -R -p /usr/local/nagiosgraph/var /bk \
- && cp -R -p /usr/local/nagios/libexec /bk \
- && cp -R -p /usr/local/nagiosgraph/etc /bk \
+ && mkdir -p /bk/nagios \
+ && mkdir -p /bk/nagiosgraph \
+ && cp -R -p /usr/local/nagios/etc /bk/nagios \
+ && cp -R -p /usr/local/nagios/var /bk/nagios \
+ && cp -R -p /usr/local/nagiosgraph/var /bk/nagiosgraph \
+ && cp -R -p /usr/local/nagios/libexec /bk/nagios \
+ && cp -R -p /usr/local/nagiosgraph/etc /bk/nagiosgraph \
 
 #Define schedule task and ntp timezone
  && sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
