@@ -14,9 +14,12 @@ External custom mode:
  -v /volume2:/share \
  test`
 
-1. nagios/etc foler mount to github /nagios/etc folder, add host into object file, push to trigger a nagios restart.
+1. copy nagios and nagiosgraph folder to local host which running nagios container.
 
-2. nagios/var folder mount to host folder.  Log data also use volume container to replace.
+2. nagios/etc foler mount to github /etc folder, add host into object file, push to trigger a nagios restart.
 
-3. Remove nagios container, the previous data still exist. 
+3. nagios/var folder mount to host folder.  Log data also use volume container to replace.
 
+4. copy nagios and nagiosgraph folder to local host.
+
+5. Remove nagios container, the previous data still exist.
