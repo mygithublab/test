@@ -1,0 +1,33 @@
+[1522821069] Nagios 4.3.4 starting... (PID=198)
+[1522821069] Local time is Wed Apr 04 13:51:09 CST 2018
+[1522821069] LOG VERSION: 2.0
+[1522821069] qh: Socket '/usr/local/nagios/var/rw/nagios.qh' successfully initialized
+[1522821069] qh: core query handler registered
+[1522821069] nerd: Channel hostchecks registered successfully
+[1522821069] nerd: Channel servicechecks registered successfully
+[1522821069] nerd: Channel opathchecks registered successfully
+[1522821069] nerd: Fully initialized and ready to rock!
+[1522821069] wproc: Successfully registered manager as @wproc with query handler
+[1522821069] wproc: Registry request: name=Core Worker 200;pid=200
+[1522821069] wproc: Registry request: name=Core Worker 202;pid=202
+[1522821069] wproc: Registry request: name=Core Worker 205;pid=205
+[1522821069] wproc: Registry request: name=Core Worker 207;pid=207
+[1522821069] wproc: Registry request: name=Core Worker 203;pid=203
+[1522821069] wproc: Registry request: name=Core Worker 204;pid=204
+[1522821069] wproc: Registry request: name=Core Worker 212;pid=212
+[1522821069] wproc: Registry request: name=Core Worker 208;pid=208
+[1522821069] wproc: Registry request: name=Core Worker 206;pid=206
+[1522821069] wproc: Registry request: name=Core Worker 213;pid=213
+[1522821069] wproc: Registry request: name=Core Worker 209;pid=209
+[1522821069] wproc: Registry request: name=Core Worker 210;pid=210
+[1522821070] Successfully launched command file worker with pid 240
+[1522824669] Auto-save of retention data completed successfully.
+[1522828269] Auto-save of retention data completed successfully.
+[1522831869] Auto-save of retention data completed successfully.
+[1522835469] Auto-save of retention data completed successfully.
+[1522839069] Auto-save of retention data completed successfully.
+[1522842669] Auto-save of retention data completed successfully.
+[1522846269] Auto-save of retention data completed successfully.
+[1522849869] Auto-save of retention data completed successfully.
+[1522853469] Auto-save of retention data completed successfully.
+[1522857069] Auto-save of retention data completed successfully.

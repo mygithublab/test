@@ -5,13 +5,17 @@
 FROM ubuntu
 
 #Maintainer information
-MAINTAINER Samson (mygithublab@126.com)
+MAINTAINER Mygithub (mygithublab@126.com)
 
 #Setup environment
 ENV NAGIOSADMIN_USER nagiosadmin
 ENV NAGIOSADMIN_PASS nagios
 
-#Install tools 
+#Copy local Nagios installation to container
+#ADD nagios-4.3.4.tar.gz /tmp
+#ADD nagios-plugins-2.2.1.tar.gz /tmp
+
+#Install tools
 RUN apt-get update && apt-get install -y \
     openssh-server \
     git \
@@ -20,10 +24,6 @@ RUN apt-get update && apt-get install -y \
     ntp \
     ntpdate \
     tzdata \
-
-#Copy local Nagios installation to container
-#ADD nagios-4.3.4.tar.gz /tmp
-#ADD nagios-plugins-2.2.1.tar.gz /tmp
 
 #Prerequisties software for Nagios Core
     autoconf \
@@ -59,13 +59,13 @@ RUN apt-get update && apt-get install -y \
     libgd-gd2-perl \
     libnagios-object-perl \
 
-#Prerequisies software for ping function 
+#Prerequisies software for ping function
     inetutils-ping \
     net-tools \
- && apt-get clean \
+ && apt-get clean 
 
 #Download and nagios core and nagios plug-in to /tmp folder
- && cd /tmp \
+RUN cd /tmp \
  && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
  && tar zxvf nagioscore.tar.gz \
  && cd /tmp/nagioscore-nagios-4.3.4/ \
@@ -90,11 +90,10 @@ RUN apt-get update && apt-get install -y \
  && ./configure \
  && make \
  && make install \
- && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
 #Downloading nagiosGraph to /tmp folder
- && cd /tmp \
- && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
+RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
  && tar zxvf nagiosgraph.tar.gz && cd /tmp/nagiosgraph-1.5.2 \
  && ./install.pl --install                                              \
          --prefix                   /usr/local/nagiosgraph              \
@@ -105,7 +104,8 @@ RUN apt-get update && apt-get install -y \
          --nagios-cgi-url           /nagiosgraph/cgi-bin                \
          --nagios-perfdata-file     /usr/local/nagios/var/perfdata.log  \
          --nagios-user              nagios                              \
-         --www-user                 www-data                            \
+         --www-user                 www-data                            \ 
+
 #Graphs in Nagios Mouseovers for nagiosGraph
  && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
  && sed -i '172a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
@@ -130,7 +130,7 @@ RUN apt-get update && apt-get install -y \
  && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_name process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
- && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \ 
+ && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \
 
 #Configuring Graphing and Display for nagiosGraph
  && sed -i '$a Include /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf' /etc/apache2/apache2.conf \
@@ -141,7 +141,11 @@ RUN apt-get update && apt-get install -y \
  && sed -i '$a default_geometry = 1000x200' /usr/local/nagiosgraph/etc/nagiosgraph.conf \
  && sed -i 's/action_url_target=_blank/action_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
- && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
+
+#Fixes problem with not working multiple selection for nagiosgraph datasets and periods
+ && sed -i '2467 s/$cgi->td($cgi->popup_menu(-name => '\''period'\'', -values => \[@PERIOD_KEYS\], -labels => \\%period_labels, -size => PERIODLISTROWS, -multiple => 1)), "\\n",/$cgi->td($cgi->popup_menu(-name => '\''period'\'', -values => \[@PERIOD_KEYS\], -labels => \\%period_labels, -size => PERIODLISTROWS, -multiple)), "\\n",/' /usr/local/nagiosgraph/etc/ngshared.pm \
+ && sed -i '2460 s/$cgi->td($cgi->popup_menu(-name => '\''db'\'', -values => \[\], -size => DBLISTROWS, -multiple => 1)), "\\n",/$cgi->td($cgi->popup_menu(-name => '\''db'\'', -values => \[\], -size => DBLISTROWS, -multiple)), "\\n",/' /usr/local/nagiosgraph/etc/ngshared.pm
 
 ADD run.sh /run.sh
 ADD script.sh /script.sh
