@@ -27,4 +27,6 @@ External custom mode:
 
 5. Fixed problem with not working multiple selection for nagiosgraph datasets and periods. 
 
-6. Migration Nagios and Nagiosgraph var folder to backup location.
+6. Migration Nagios and Nagiosgraph var folder to backup locationo.
+
+Thanks.
