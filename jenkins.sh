@@ -1,7 +1,7 @@
-#/bin/bash
+#!/bin/bash
 
 docker build -t external .
-#docker rm -f external
+docker rm -f external
 docker run -itd --name external -p 10001:22 -p 10000:80  -v /volume2:/share --restart=always external
 
 #docker run -itd --name external -p 10001:22 -p 10000:80 \
