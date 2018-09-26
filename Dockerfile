@@ -141,6 +141,7 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '$a default_geometry = 1000x200' /usr/local/nagiosgraph/etc/nagiosgraph.conf \
  && sed -i 's/action_url_target=_blank/action_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
+ && sed -i 's/result_limit=100/result_limit=0/g' /usr/local/nagios/etc/cgi.cfg \
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Fixes problem with not working multiple selection for nagiosgraph datasets and periods
