@@ -2,7 +2,7 @@
 #Author: mygithublab@126.com
 #Nagios core with Nagiosgraph
 
-FROM ubuntu
+FROM ubuntu:16.04
 
 #Maintainer information
 MAINTAINER Mygithub (mygithublab@126.com)
