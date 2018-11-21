@@ -91,8 +91,8 @@ RUN cd /tmp \
  && ./tools/setup \
  && ./configure \
  && make \
- && make install \
- && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+ && make install 
+# && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
 #Downloading nagiosGraph to /tmp folder
 RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
