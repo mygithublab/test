@@ -196,7 +196,6 @@ RUN mkdir /share \
 
 EXPOSE 80 22
 
-VOLUME "/share" 
-#"/usr/local/nagios/etc" "/usr/local/nagios/var" "/usr/local/nagios/libexec" "/usr/local/nagiosgraph/var" "/usr/local/nagiosgraph/etc"
+VOLUME "/share" "/usr/local/nagios/etc" "/usr/local/nagios/var" "/usr/local/nagios/libexec" "/usr/local/nagiosgraph/var" "/usr/local/nagiosgraph/etc"
 
 CMD ["/run.sh"]
