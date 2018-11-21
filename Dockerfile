@@ -120,7 +120,7 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Configuring Data Processing for nagiosGraph
-# && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
+ && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file=\/usr\/local\/nagios\/var\/perfdata.log' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_template=\$LASTSERVICECHECK\$\|\|\$HOSTNAME\$\|\|\$SERVICEDESC\$\|\|$SERVICEOUTPUT\$\|\|\$SERVICEPERFDATA\$' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_mode=a' /usr/local/nagios/etc/nagios.cfg \
