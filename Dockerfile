@@ -66,9 +66,9 @@ RUN apt-get update && apt-get install -y \
 
 #Download and nagios core and nagios plug-in to /tmp folder
 RUN cd /tmp \
- && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.1.tar.gz \
+ && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.2.tar.gz \
  && tar zxvf nagioscore.tar.gz \
- && cd /tmp/nagioscore-nagios-4.4.1/ \
+ && cd /tmp/nagioscore-nagios-4.4.2/ \
  && ./configure --with-httpd-conf=/etc/apache2/sites-enabled \
  && make all \
 # && useradd nagios \ ;4.3.4 installation
@@ -196,6 +196,7 @@ RUN mkdir /share \
 
 EXPOSE 80 22
 
-VOLUME "/share" "/usr/local/nagios/etc" "/usr/local/nagios/var" "/usr/local/nagios/libexec" "/usr/local/nagiosgraph/var" "/usr/local/nagiosgraph/etc"
+VOLUME "/share" 
+#"/usr/local/nagios/etc" "/usr/local/nagios/var" "/usr/local/nagios/libexec" "/usr/local/nagiosgraph/var" "/usr/local/nagiosgraph/etc"
 
 CMD ["/run.sh"]
