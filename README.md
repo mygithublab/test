@@ -17,7 +17,7 @@ External mode:
  github-test-ubuntu-nagios-image
 `
 
-1. After Nagios completed initialized then, copy nagios and nagiosgraph var folder to local host where is running nagios container.
+1. After Nagios completed initialized, then, copy nagios and nagiosgraph var folder to local host where is running nagios container.
 
 2. Nagios/etc foler mount to github /etc folder, add host into object file, push to trigger a nagios restart.
 
@@ -27,6 +27,6 @@ External mode:
 
 5. Fixed problem with not working multiple selection for nagiosgraph datasets and periods. 
 
-6. Migration Nagios and Nagiosgraph var folder to backup locationo.
+6. Migration Nagios and Nagiosgraph var folder to backup location.
 
 Thanks.
