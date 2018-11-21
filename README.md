@@ -1,7 +1,4 @@
-# Template for deploy nagios docker of Ubuntu
-test on 20181117
-
-test on 20180705
+# Template for deploy nagios core 4.4.2 docker of Ubuntu
 
 Testing or template
 
@@ -11,7 +8,7 @@ Standalone mode:
 
 External mode:
 
-`docker run -itd --name test -p 5001:22 -p 5000:80 \
+`docker run -itd --name test -p 10087:22 -p 10086:80 \
  -v $WORKSPACE/etc:/usr/local/nagios/etc \
  -v /github/test/nagios/var:/usr/local/nagios/var \
  -v /github/test/nagiosgraph/var:/usr/local/nagiosgraph/var \
