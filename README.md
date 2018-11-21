@@ -29,4 +29,15 @@ External mode:
 
 6. Migration Nagios and Nagiosgraph var folder to backup location.
 
+P.S
+In jenkins configration, add following script into excute shell.
+
+`#!/bin/bash
+
+$WORKSPACE/jenkins.sh
+`
+
+
+
+
 Thanks.
