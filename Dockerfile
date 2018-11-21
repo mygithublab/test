@@ -1,6 +1,6 @@
 #This dockerfile base on Ubuntu image
 #Author: mygithublab@126.com
-#Nagios core with Nagiosgraph
+#Nagios core 4.4.2 with Nagiosgraph
 
 FROM ubuntu:16.04
 
@@ -66,16 +66,18 @@ RUN apt-get update && apt-get install -y \
 
 #Download and nagios core and nagios plug-in to /tmp folder
 RUN cd /tmp \
- && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.3.4.tar.gz \
+ && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.1.tar.gz \
  && tar zxvf nagioscore.tar.gz \
- && cd /tmp/nagioscore-nagios-4.3.4/ \
+ && cd /tmp/nagioscore-nagios-4.4.1/ \
  && ./configure --with-httpd-conf=/etc/apache2/sites-enabled \
  && make all \
- && useradd nagios \
+# && useradd nagios \ ;4.3.4 installation
+ && make install-groups-users \
  && usermod -a -G nagios www-data \
  && make install \
- && make install-init \
- && update-rc.d nagios defaults \
+# && make install-init \ ;4.3.4 installation
+# && update-rc.d nagios defaults \ ;4.3.4 installation
+ && make install-daemoninit \
  && make install-commandmode \
  && make install-config \
  && make install-webconf \
