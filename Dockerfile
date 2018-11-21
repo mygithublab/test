@@ -91,8 +91,9 @@ RUN cd /tmp \
  && ./tools/setup \
  && ./configure \
  && make \
- && make install 
-# && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+ && make install \
+#check nagios installation status 
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
 #Downloading nagiosGraph to /tmp folder
 RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/1.5.2/nagiosgraph-1.5.2.tar.gz \
@@ -110,8 +111,13 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
 
 #Graphs in Nagios Mouseovers for nagiosGraph
  && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
- && sed -i '172a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
- && sed -i '185a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
+# line 172 4.3.4 installation
+ && sed -i '181a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
+# line 185 4.3.4 installation
+ && sed -i '197a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
+
+#check nagios installation status
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Configuring Data Processing for nagiosGraph
  && sed -i 's/process_performance_data=0/process_performance_data=1/g' /usr/local/nagios/etc/nagios.cfg \
@@ -120,6 +126,9 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '$a service_perfdata_file_mode=a' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_processing_interval=10' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_processing_command=process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/nagios.cfg \
+
+#check nagios installation status
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 # && cat <<EOF>>/usr/local/nagios/etc/objects/commands.cfg
 #define command {
@@ -134,6 +143,9 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \
 
+#check nagios installation status
+ && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
+
 #Configuring Graphing and Display for nagiosGraph
  && sed -i '$a Include /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf' /etc/apache2/apache2.conf \
  && sed -i '2,7 s/^#//' /usr/local/nagiosgraph/etc/nagiosgraph-apache.conf \
@@ -144,6 +156,8 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i 's/action_url_target=_blank/action_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/result_limit=100/result_limit=0/g' /usr/local/nagios/etc/cgi.cfg \
+
+#check nagios installation status
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Fixes problem with not working multiple selection for nagiosgraph datasets and periods
