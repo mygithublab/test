@@ -92,6 +92,19 @@ RUN cd /tmp \
  && ./configure \
  && make \
  && make install \
+#Download and nagios core and nagios plug-in to /tmp folder
+ && cd /tmp \
+ && wget --no-check-certificate https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-3.2.1/nrpe-3.2.1.tar.gz \
+ && tar zxvf nrpe-3.2.1.tar.gz \
+ && cd nrpe-3.2.1 \
+ && ./configure \
+ && make check_nrpe \
+ && make install-plugin \
+#define the nrpe command for nagios
+ && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t command_name check_nrpe' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$' /usr/local/nagios/etc/objects/commands.cfg \
+ && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \
 #check nagios installation status 
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
