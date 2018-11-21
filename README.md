@@ -32,12 +32,8 @@ External mode:
 P.S
 In jenkins configration, add following script into excute shell.
 
-`#!/bin/bash
+`#!/bin/bash`
 
-$WORKSPACE/jenkins.sh
-`
-
-
-
+`$WORKSPACE/jenkins.sh`
 
 Thanks.
