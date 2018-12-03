@@ -1,0 +1,12 @@
+sudo:
+  - required
+language:
+  - bash
+services:
+  - docker
+
+install:
+  - git clone https://github.com/mygithublab/test.git ~/test
+
+script:
+  - ./build.sh
