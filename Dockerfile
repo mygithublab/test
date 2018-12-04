@@ -1,6 +1,6 @@
-#This dockerfile base on Ubuntu image
+#This dockerfile base on Ubuntu image 16.04
 #Author: mygithublab@126.com
-#Nagios core 4.4.2 with Nagiosgraph
+#Nagios core 4.4.2 with Nagiosgraph NRPE
 
 FROM ubuntu:16.04
 
@@ -11,12 +11,9 @@ MAINTAINER Mygithub (mygithublab@126.com)
 ENV NAGIOSADMIN_USER nagiosadmin
 ENV NAGIOSADMIN_PASS nagios
 
-#Copy local Nagios installation to container
-#ADD nagios-4.3.4.tar.gz /tmp
-#ADD nagios-plugins-2.2.1.tar.gz /tmp
-
 #Install tools
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+ && apt-get install -y \
     openssh-server \
     git \
     vim \
@@ -64,7 +61,7 @@ RUN apt-get update && apt-get install -y \
     net-tools \
  && apt-get clean 
 
-#Download and nagios core and nagios plug-in to /tmp folder
+#Download nagios core and nagios plug-in to /tmp folder
 RUN cd /tmp \
  && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.2.tar.gz \
  && tar zxvf nagioscore.tar.gz \
@@ -92,7 +89,7 @@ RUN cd /tmp \
  && ./configure \
  && make \
  && make install \
-#Download and nagios core and nagios plug-in to /tmp folder
+#Download nagios NRPE plug-in to /tmp folder
  && cd /tmp \
  && wget --no-check-certificate https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-3.2.1/nrpe-3.2.1.tar.gz \
  && tar zxvf nrpe-3.2.1.tar.gz \
@@ -100,12 +97,12 @@ RUN cd /tmp \
  && ./configure \
  && make check_nrpe \
  && make install-plugin \
-#define the nrpe command for nagios
+#define the nrpe command for nagios core
  && sed -i '$a define command \{' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_name check_nrpe' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \
-#check nagios installation status 
+#check nagios core installation status 
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
 #Downloading nagiosGraph to /tmp folder
@@ -124,12 +121,12 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
 
 #Graphs in Nagios Mouseovers for nagiosGraph
  && cp share/nagiosgraph.ssi /usr/local/nagios/share/ssi/common-header.ssi \
-# line 172 4.3.4 installation
+# line 172 for 4.3.4 installation
  && sed -i '181a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
-# line 185 4.3.4 installation
+# line 185 for 4.3.4 installation
  && sed -i '197a \\taction_url\t\t\t\/nagiosgraph\/cgi-bin\/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$'\'' onMouseOver='\''showGraphPopup(this)'\'' onMouseOut='\''hideGraphPopup()'\'' rel='\''\/nagiosgraph\/cgi-bin\/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&period=day&rrdopts=-w+450+-j' /usr/local/nagios/etc/objects/templates.cfg \
 
-#check nagios installation status
+#check nagios core installation status
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Configuring Data Processing for nagiosGraph
@@ -140,7 +137,7 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '$a service_perfdata_file_processing_interval=10' /usr/local/nagios/etc/nagios.cfg \
  && sed -i '$a service_perfdata_file_processing_command=process-service-perfdata-for-nagiosgraph' /usr/local/nagios/etc/nagios.cfg \
 
-#check nagios installation status
+#check nagios core installation status
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 # && cat <<EOF>>/usr/local/nagios/etc/objects/commands.cfg
@@ -156,7 +153,7 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '$a \\t command_line /usr/local/nagiosgraph/bin/insert.pl' /usr/local/nagios/etc/objects/commands.cfg \
  && sed -i '$a \\t \}' /usr/local/nagios/etc/objects/commands.cfg \
 
-#check nagios installation status
+#check nagios core installation status
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Configuring Graphing and Display for nagiosGraph
@@ -170,7 +167,7 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i 's/notes_url_target=_blank/notes_url_target=_self/g' /usr/local/nagios/etc/cgi.cfg \
  && sed -i 's/result_limit=100/result_limit=0/g' /usr/local/nagios/etc/cgi.cfg \
 
-#check nagios installation status
+#check nagios core installation status
  && /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg \
 
 #Fixes problem with not working multiple selection for nagiosgraph datasets and periods
@@ -181,11 +178,11 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
 && rm -rf /tmp/*
 
 ADD run.sh /run.sh
-ADD script.sh /script.sh
+#ADD script.sh /script.sh
 ADD authorized_keys /root/.ssh/authorized_keys
 RUN mkdir /share \
  && chmod 755 /run.sh \
- && chmod 755 /script.sh \
+# && chmod 755 /script.sh \
  && chmod 700 /root/.ssh \
  && chmod 600 /root/.ssh/authorized_keys \
 
@@ -199,7 +196,7 @@ RUN mkdir /share \
  && cp -R -p /usr/local/nagiosgraph/etc /bk/nagiosgraph \
 
 #Define schedule task and ntp timezone
- && sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
+# && sed -i '$a * * * * * root bash /script.sh' /etc/crontab \
  && sed -i 's/Etc\/UTC/Asia\/Shanghai/g' /etc/timezone \ 
  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
  && sed -i '$a server 0.ubuntu.pool.ntp.org' /etc/ntp.conf \
