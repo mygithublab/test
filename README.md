@@ -31,6 +31,14 @@ External mode:
 
 6. Migration Nagios and Nagiosgraph var folder to backup location.
 
+
+## Fuction
+
+1. Check Memory.
+
+2. Check TCP traffic.
+
+
 P.S
 In jenkins configration, add following script into excute shell.
 

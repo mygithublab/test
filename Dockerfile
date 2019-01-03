@@ -61,11 +61,7 @@ RUN apt-get update \
     net-tools \
  && apt-get clean 
 
-<<<<<<< HEAD
 #Download and install nagios core & plug-in to /tmp folder
-=======
-#Download nagios core and nagios plug-in to /tmp folder
->>>>>>> f0bdbc157ba6ccd2a90feb58ed61658844659299
 RUN cd /tmp \
  && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.2.tar.gz \
  && tar zxvf nagioscore.tar.gz \
@@ -93,11 +89,8 @@ RUN cd /tmp \
  && ./configure \
  && make \
  && make install \
-<<<<<<< HEAD
+
 #Download and install nagios NRPE to /tmp folder
-=======
-#Download nagios NRPE plug-in to /tmp folder
->>>>>>> f0bdbc157ba6ccd2a90feb58ed61658844659299
  && cd /tmp \
  && wget --no-check-certificate https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-3.2.1/nrpe-3.2.1.tar.gz \
  && tar zxvf nrpe-3.2.1.tar.gz \
