@@ -64,7 +64,7 @@ RUN apt-get update && apt-get install -y \
     net-tools \
  && apt-get clean 
 
-#Download and nagios core and nagios plug-in to /tmp folder
+#Download and install nagios core & plug-in to /tmp folder
 RUN cd /tmp \
  && wget --no-check-certificate -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.2.tar.gz \
  && tar zxvf nagioscore.tar.gz \
@@ -92,7 +92,7 @@ RUN cd /tmp \
  && ./configure \
  && make \
  && make install \
-#Download and nagios core and nagios plug-in to /tmp folder
+#Download and install nagios NRPE to /tmp folder
  && cd /tmp \
  && wget --no-check-certificate https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-3.2.1/nrpe-3.2.1.tar.gz \
  && tar zxvf nrpe-3.2.1.tar.gz \
@@ -177,8 +177,23 @@ RUN cd /tmp && wget --no-check-certificate -O nagiosgraph.tar.gz https://nchc.dl
  && sed -i '2467 s/$cgi->td($cgi->popup_menu(-name => '\''period'\'', -values => \[@PERIOD_KEYS\], -labels => \\%period_labels, -size => PERIODLISTROWS, -multiple => 1)), "\\n",/$cgi->td($cgi->popup_menu(-name => '\''period'\'', -values => \[@PERIOD_KEYS\], -labels => \\%period_labels, -size => PERIODLISTROWS, -multiple)), "\\n",/' /usr/local/nagiosgraph/etc/ngshared.pm \
  && sed -i '2460 s/$cgi->td($cgi->popup_menu(-name => '\''db'\'', -values => \[\], -size => DBLISTROWS, -multiple => 1)), "\\n",/$cgi->td($cgi->popup_menu(-name => '\''db'\'', -values => \[\], -size => DBLISTROWS, -multiple)), "\\n",/' /usr/local/nagiosgraph/etc/ngshared.pm \
 
+#Fuction_1 Prerequisties softeare for check_tcptraffic-2.2.7.tar.gz
+ && cd /tmp \
+ && cpan App::cpanminus \
+ && cpanm Carp English File::Basename Monitoring::Plugin Monitoring::Plugin::Getopt Monitoring::Plugin::Threshold Monitoring::Plugin::Range Readonly version \
+ && wget --no-check-certificate https://github.com/matteocorti/check_tcptraffic/releases/download/v2.2.7/check_tcptraffic-2.2.7.tar.gz \
+ && tar -zxvf check_tcptraffic-2.2.7.tar.gz \
+ && cd check_tcptraffic-2.2.7 \
+ && perl Makefile.PL INSTALLSITESCRIPT=/usr/local/nagios/libexec && make && make install \
+
+#Fuction_2 Download check_memory plugin
+ && git clone https://github.com/justintime/nagios-plugins.git \
+ && cp nagios-plugins/check_mem/check_mem.pl /usr/local/nagios/libexec/ \
+ && chown nagios.nagios /usr/local/nagios/libexec/check_mem.pl \
+ && chmod 755 /usr/local/nagios/libexec/check_mem.pl \
+
 #Clean /tmp folder
-&& rm -rf /tmp/*
+ && rm -rf /tmp/*
 
 ADD run.sh /run.sh
 ADD script.sh /script.sh
