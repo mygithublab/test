@@ -1,5 +1,7 @@
 # Template for deploy nagios core 4.4.2 docker of Ubuntu
 
+Build Status: [![Build Status](https://travis-ci.org/mygithublab/test.svg?branch=master)](https://travis-ci.org/mygithublab/test)
+
 Testing or template
 
 Standalone mode:
