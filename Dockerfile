@@ -1,4 +1,4 @@
-#This dockerfile base on Ubuntu image 16.04
+#This dockerfile base on Ubuntu image 16.04_test
 #Author: mygithublab@126.com
 #Nagios core 4.4.2 with Nagiosgraph NRPE
 
