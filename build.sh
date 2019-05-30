@@ -9,6 +9,6 @@ docker build -t "${DOCKER_IMAGE_NAME}" .
 
 docker images
 
-docker run -itd --name "${DOCKER_CONTAINER_NAME}" -p 10086:80 -t "${DOCKER_IMAGE_NAME}"
+docker run -itd --name "${DOCKER_CONTAINER_NAME}" -p 10086:80 --restart=always -t "${DOCKER_IMAGE_NAME}"
 
 docker ps -a
