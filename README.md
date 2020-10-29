@@ -47,3 +47,6 @@ In jenkins configration, add following script into excute shell.
 `$WORKSPACE/jenkins.sh`
 
 Thanks.
+
+
+Update later...
